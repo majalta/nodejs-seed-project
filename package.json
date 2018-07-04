@@ -1,0 +1,50 @@
+{
+  "name": "atomizer",
+  "version": "0.1.0",
+  "description": "description",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=\"test\" ./node_modules/.bin/nyc --nycrc-path ./test/.nycrc ./node_modules/.bin/mocha --require babel-register --reporter mochawesome --reporter-options reportDir=test/report,reportFilename=index test/**/**.spec.js",
+    "build:docSrc": "documentation build src/*.js --shallow -f md -o docs/src.md",
+    "build:docs": "npm run build:docSrc; documentation build --config config/documentation.yml -f md -o docs/index.md",
+    "codeclimate": "docker run --interactive --tty --rm --env CODECLIMATE_CODE=\"$PWD\" --volume \"$PWD\":/code   --volume /var/run/docker.sock:/var/run/docker.sock   --volume /tmp/cc:/tmp/cc codeclimate/codeclimate analyze",
+    "start": "./node_modules/babel-cli/bin/babel-node.js index.js",
+    "start:prof": "./node_modules/babel-cli/bin/babel-node.js --prof index.js",
+    "kill:server": "ps -ef | grep 'babel-node' | awk '{print $2}' | grep -v 'grep' | xargs kill",
+    "start:dev": "npm run kill:server; NODE_ENV=\"development\" npm run start",
+    "start:pro": "npm run kill:server; NODE_ENV=\"production\" npm run start",
+    "start:dev:prof": "npm run kill:server; npm run start:prof",
+    "process:profile": "node --prof-process isolate*.log > processed.txt",
+    "start:ab": "ab -k -c 5 -n 5 -T 'application/json' -p fixtures/bigData.json http://localhost:9001/article/body"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://gitlab.internet.int/fronts/ms-atomizer"
+  },
+  "keywords": [
+    "nodejs",
+    "normalizer",
+    "articles"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2",
+    "log4js": "^2.4.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-plugin-module-resolver": "^3.1.1",
+    "babel-plugin-rewire": "^1.1.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "documentation": "^4.0.0",
+    "eslint": "^4.19.1",
+    "mocha": "^5.2.0",
+    "mochawesome": "^3.0.2",
+    "nyc": "^12.0.2",
+    "sinon": "^5.1.0"
+  }
+}
