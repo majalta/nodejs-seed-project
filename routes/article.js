@@ -6,11 +6,11 @@ const jsonParser = bodyParser.json();
 
 router.put('/ads-slots', jsonParser, function(req, res, next) {
     try {
-        res.send(response);
+        res.send(res);
     }
-    catch(e => {
+    catch(e) {
         next(e);
-    });
+    };
 });
 
 module.exports = router;
