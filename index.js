@@ -56,8 +56,6 @@ if (cluster.isMaster) {
     app.use(logErrors);
     app.use(clientErrorHandler);
     app.use(errorHandler);
-    // START THE browser
-    new DOMInterface();
     // START THE SERVER
     // =============================================================================
     app.listen(port);
