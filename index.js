@@ -1,17 +1,14 @@
 'use strict';
 import settings from 'server-settings';
+import logger from 'logger';
+
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 const express = require('express');
 const app = express();
-const log4js = require('log4js');
-const logger = log4js.getLogger();
 const port = settings.http.port || 9000; // set our port
 
-// default level is OFF - which means no logs at all.
-// logger.level = process.env.NODE_ENV=='production'?'error':'debug';
-logger.level = 'info';
-//  ERROR HANDLING
+//  ======= ERROR HANDLING ========================= //
 function logErrors(err, req, res, next) {
     logger.error(`[ServerIndex] ${err.message}`);
     next(err);
@@ -26,7 +23,6 @@ function clientErrorHandler(err, req, res, next) {
         next(err);
     }
 }
-
 // eslint-disable-next-line
 function errorHandler(err, req, res, next) {
     res.status(500).send({
@@ -50,9 +46,9 @@ if (cluster.isMaster) {
 } else {
     //  ROUTER MANAGER   -----------------------------
     const articleRoutes = require('./routes/article');
+    app.use('/article', articleRoutes);
     app.use('/coverage', express.static('./test/coverage'));
     app.use('/report', express.static('./test/report'));
-    app.use('/article', articleRoutes);
     app.use(logErrors);
     app.use(clientErrorHandler);
     app.use(errorHandler);
@@ -65,6 +61,4 @@ if (cluster.isMaster) {
         process.exit(1);
     });
     logger.info(`[${process.pid}] ======================= Server is running in port: ${port}`);
-    logger.level = process.env.NODE_ENV=='production'?'error':'debug';
-
 }
